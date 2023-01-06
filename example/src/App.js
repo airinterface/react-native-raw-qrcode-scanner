@@ -1,27 +1,24 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import QRCodeScanner, { OnScannedEvent } from 'react-native-raw-qrcode-scanner';
-
+import QRCodeScanner from 'react-native-raw-qrcode-scanner';
 export default function App() {
   const [result, setResult] = useState('');
   const [isFront, setIsFront] = useState(false);
   const [enableScan, setEnableScan] = useState(true);
   const [enableFlash, setEnableFlash] = useState(false);
   const [facingText, setFacingText] = useState('back');
-
   const toggleCamera = () => {
     setIsFront(!isFront);
   };
-  var disableTimer: any = null;
+  var disableTimer = null;
   const toggleScan = () => {
     setEnableScan(!enableScan);
   };
-
   const toggleFlash = () => {
     setEnableFlash(!enableFlash);
   };
-  const onScanned = (scanned: OnScannedEvent) => {
+  const onScanned = (scanned) => {
     if (disableTimer) {
       clearTimeout(disableTimer);
       disableTimer = null;
@@ -31,7 +28,6 @@ export default function App() {
       setResult('');
     }, 1000);
   };
-
   useEffect(() => {
     if (isFront) {
       setFacingText('front');
@@ -39,46 +35,57 @@ export default function App() {
       setFacingText('back');
     }
   }, [isFront]);
-
-  return (
-    <View style={styles.container}>
-      <QRCodeScanner
-        cameraType={facingText}
-        flashEnabled={enableFlash}
-        scanEnabled={enableScan}
-        onScanned={onScanned}
-        isVibrateOnScan={true}
-        style={styles.cameraContainer}
-      />
-      <View style={styles.bottomContainer}>
-        <View style={styles.row}>
-          <Text>Result: {result}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text onPress={toggleCamera} style={styles.button}>
-            {facingText}
-          </Text>
-          <Text
-            onPress={toggleScan}
-            style={[
+  return React.createElement(
+    View,
+    { style: styles.container },
+    React.createElement(QRCodeScanner, {
+      cameraType: facingText,
+      flashEnabled: enableFlash,
+      scanEnabled: enableScan,
+      onScanned: onScanned,
+      isVibrateOnScan: true,
+      style: styles.cameraContainer,
+    }),
+    React.createElement(
+      View,
+      { style: styles.bottomContainer },
+      React.createElement(
+        View,
+        { style: styles.row },
+        React.createElement(Text, null, 'Result: ', result)
+      ),
+      React.createElement(
+        View,
+        { style: styles.row },
+        React.createElement(
+          Text,
+          { onPress: toggleCamera, style: styles.button },
+          facingText
+        ),
+        React.createElement(
+          Text,
+          {
+            onPress: toggleScan,
+            style: [
               styles.button,
               { backgroundColor: enableScan ? enableColor : disableColor },
-            ]}
-          >
-            Scan
-          </Text>
-          <Text
-            onPress={toggleFlash}
-            style={[
+            ],
+          },
+          'Scan'
+        ),
+        React.createElement(
+          Text,
+          {
+            onPress: toggleFlash,
+            style: [
               styles.button,
               { backgroundColor: enableFlash ? enableColor : disableColor },
-            ]}
-          >
-            Flash
-          </Text>
-        </View>
-      </View>
-    </View>
+            ],
+          },
+          'Flash'
+        )
+      )
+    )
   );
 }
 const enableColor = '#22a6b3';

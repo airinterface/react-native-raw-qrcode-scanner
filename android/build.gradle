@@ -1,6 +1,7 @@
 buildscript {
   // Buildscript is evaluated before everything else so we can't use getExtOrDefault
   def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["RawQrcodeScanner_kotlinVersion"]
+  def kotlinx_version = project.properties["RawQrcodeScanner_kotlinxVersion"]
 
   repositories {
     google()
@@ -11,6 +12,7 @@ buildscript {
     classpath "com.android.tools.build:gradle:7.2.1"
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_version"
   }
 }
 
@@ -64,6 +66,10 @@ repositories {
 }
 
 def kotlin_version = getExtOrDefault("kotlinVersion")
+def kotlinx_version = getExtOrDefault("kotlinxVersion")
+def barcodeScannerVersion =  getExtOrDefault("barcodeScanningVersion")
+def cameraxVersion = getExtOrDefault("cameraXVersion")
+def lifecycleVersion = getExtOrDefault("androidXLifecycle")
 
 dependencies {
   // For < 0.71, this will be from the local maven repo
@@ -71,12 +77,21 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-}
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_version"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_version"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-guava:$kotlinx_version"
+  implementation "com.google.mlkit:barcode-scanning:$barcodeScannerVersion"
+  implementation "androidx.camera:camera-camera2:$cameraxVersion"
+  implementation "androidx.camera:camera-lifecycle:$cameraxVersion"
+  implementation "androidx.camera:camera-view:$cameraxVersion"
+  implementation "androidx.camera:camera-view:$cameraxVersion"
 
-if (isNewArchitectureEnabled()) {
-  react {
-    jsRootDir = file("../src/")
-    libraryName = "RawQrcodeScannerView"
-    codegenJavaPackageName = "com.rawqrcodescanner"
+
+  if (isNewArchitectureEnabled()) {
+    react {
+      jsRootDir = file("../src/")
+      libraryName = "RawQrcodeScannerView"
+      codegenJavaPackageName = "com.rawqrcodescanner"
+    }
   }
 }

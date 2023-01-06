@@ -1,21 +1,50 @@
 # react-native-raw-qrcode-scanner
 
-QRCodeReader that decodes to raw foramt
+Simple QRCode Reader that decodes to raw foramt
 
 ## Installation
 
 ```sh
 npm install react-native-raw-qrcode-scanner
 ```
+## PERMISSIONS Requirement
+
+ To have proper permission,
+
+### IOS
+ you need to add the "Privacy - Camera Usage Description" key to the info.plist of your project. This should be found in 'your_project/ios/your_project/Info.plist'. Add the following code:
+
+ ```
+<key>NSCameraUsageDescription</key>
+<string>Your message to user when the camera is accessed for the first time</string>
+
+<!-- Include this only if you are planning to use the camera roll -->
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Your message to user when the photo library is accessed for the first time</string>
+```
+### Android
+ you need to add the "Vibration" permission to your AndroidManifest.xml of your project. This should be found in your android/app/src/main/AndroidManifest.xml Add the following:
+
+```
+    <uses-permission android:name="android.permission.CAMERA" />
+    
+```
+  if you set isVibrateOnScan to true, make sure you have 
+
+```
+  <uses-permission android:name="android.permission.VIBRATE"/>
+
+```
+### IOS
 
 ## Usage
 
 ```js
-import { RawQrcodeScannerView } from "react-native-raw-qrcode-scanner";
+import { QrcodeScannerView } from "react-native-raw-qrcode-scanner";
 
 // ...
 
-<RawQrcodeScannerView color="tomato" />
+<QrcodeScannerView onScanned={onScanCalleback} cameraType={"back"} />
 ```
 
 ## Contributing
