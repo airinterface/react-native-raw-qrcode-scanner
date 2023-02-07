@@ -6,11 +6,6 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		5E555C0D2413F4C50049A1A2 /* RawQrcodeScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RawQrcodeScanner.m */; };
-		F4FF95D7245B92E800C19C63 /*  RawQrcodeScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /*  RawQrcodeScanner.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		58B511D91A9E6C8500147676 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -25,9 +20,11 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRawQrcodeScanner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRawQrcodeScanner.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3E7B5891CC2AC0600A0062D /* RawQrcodeScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RawQrcodeScanner.m; sourceTree = "<group>"; };
-		F4FF95D5245B92E700C19C63 /* RawQrcodeScanner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RawQrcodeScanner-Bridging-Header.h"; sourceTree = "<group>"; };
-		F4FF95D6245B92E800C19C63 /* RawQrcodeScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawQrcodeScanner.swift; sourceTree = "<group>"; };
+		DAF29E12296DFECB00F22320 /* RNRawQRCodeScanner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RNRawQRCodeScanner-Bridging-Header.h"; sourceTree = "<group>"; };
+		DAF29E13296DFECC00F22320 /* RNRawQrcodeScannerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNRawQrcodeScannerManager.swift; sourceTree = "<group>"; };
+		DAF29E14296DFECC00F22320 /* RNRawQrcodeScannerManagerBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNRawQrcodeScannerManagerBridge.m; sourceTree = "<group>"; };
+		DAF29E15296DFEE700F22320 /* Scanner */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scanner; sourceTree = "<group>"; };
+		DAF29E16296DFEF300F22320 /* LoggerUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerUtil.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,9 +49,11 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				F4FF95D6245B92E800C19C63 /* RawQrcodeScanner.swift */,
-				B3E7B5891CC2AC0600A0062D /* RawQrcodeScanner.m */,
-				F4FF95D5245B92E700C19C63 /* RawQrcodeScanner-Bridging-Header.h */,
+				DAF29E15296DFEE700F22320 /* Scanner */,
+				DAF29E12296DFECB00F22320 /* RNRawQRCodeScanner-Bridging-Header.h */,
+				DAF29E13296DFECC00F22320 /* RNRawQrcodeScannerManager.swift */,
+				DAF29E14296DFECC00F22320 /* RNRawQrcodeScannerManagerBridge.m */,
+				DAF29E16296DFEF300F22320 /* LoggerUtil.swift */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -116,8 +115,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F4FF95D7245B92E800C19C63 /* RawQrcodeScanner.swift in Sources */,
-				B3E7B58A1CC2AC0600A0062D /* RawQrcodeScanner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,7 +229,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = RawQrcodeScanner;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "RawQrcodeScanner-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "RNRawQrcodeScanner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -251,7 +248,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = RawQrcodeScanner;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "RawQrcodeScanner-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "RNRawQrcodeScanner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

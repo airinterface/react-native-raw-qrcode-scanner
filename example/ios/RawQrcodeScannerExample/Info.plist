@@ -51,5 +51,8 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+  <key>NSCameraUsageDescription</key>
+  <string>VisionCamera needs access to your Camera for QR Code reading.</string>
 </dict>
+
 </plist>

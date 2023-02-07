@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: '#0000FF',
+    backgroundColor: '#FF0000',
   },
   bottomContainer: {
     position: 'absolute',

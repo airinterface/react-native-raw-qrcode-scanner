@@ -5,7 +5,9 @@ import {
   View,
   UIManager,
   Platform,
+  NativeEventEmitter,
   DeviceEventEmitter,
+  NativeModules,
   Vibration,
 } from 'react-native';
 
@@ -59,7 +61,7 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
   if (typeof scanEnabled === 'boolean') {
     tmpScanEnabled = scanEnabled;
   }
-  const onChange = (event) => {
+  const onChange = (event: any) => {
     if (!onScanned) {
       return;
     }
@@ -77,6 +79,10 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
       results: event.results || [],
     });
   };
+  const eventEmitter = new NativeEventEmitter(
+    NativeModules.RNRawQrCodeScannerEventEmitter
+  );
+  eventEmitter.addListener('onScanned', onChange);
 
   DeviceEventEmitter.addListener('onScanned', onChange);
   const defaultStyle = {
@@ -110,12 +116,9 @@ const ComponentName = 'RNRawQrcodeScanner';
 
 const RNRawQrcodeScanner =
   UIManager.getViewManagerConfig(ComponentName) != null
-    ? requireNativeComponent<RawQrcodeScannerProps>(
-        ComponentName,
-        QRCodeScanner
-      )
+    ? requireNativeComponent<RawQrcodeScannerProps>(ComponentName)
     : () => {
-        throw new Error(LINKING_ERROR);
+        console.log(LINKING_ERROR);
       };
 
 export type QRCodeScannerProps = RawQrcodeScannerProps;

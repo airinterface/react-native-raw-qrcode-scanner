@@ -18,9 +18,6 @@ npm install react-native-raw-qrcode-scanner
 <key>NSCameraUsageDescription</key>
 <string>Your message to user when the camera is accessed for the first time</string>
 
-<!-- Include this only if you are planning to use the camera roll -->
-<key>NSPhotoLibraryUsageDescription</key>
-<string>Your message to user when the photo library is accessed for the first time</string>
 ```
 ### Android
  you need to add the "Vibration" permission to your AndroidManifest.xml of your project. This should be found in your android/app/src/main/AndroidManifest.xml Add the following:

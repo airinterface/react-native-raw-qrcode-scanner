@@ -15,6 +15,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/airinterface/react-native-raw-qrcode-scanner.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
+  s.resources = "ios/**/*.{storyboard}"
 
   s.dependency "React-Core"
 
