@@ -38,11 +38,28 @@ npm install react-native-raw-qrcode-scanner
 ## Usage
 
 ```js
-import { QrcodeScannerView } from "react-native-raw-qrcode-scanner";
+import QRCodeScanner, { OnScannedEvent } from 'react-native-raw-qrcode-scanner';
+  const onScanned = (scanned: OnScannedEvent) => {
+    if (disableTimer) {
+      clearTimeout(disableTimer);
+      disableTimer = null;
+    }
+    setResult(scanned.results[0]?.text || '');
+    disableTimer = setTimeout(() => {
+      setResult('');
+    }, 1000);
+  };
 
-// ...
 
-<QrcodeScannerView onScanned={onScanCalleback} cameraType={"back"} />
+  <QRCodeScanner
+    cameraType={"back"}
+    flashEnabled={true}
+    scanEnabled={true}
+    onScanned={onScanned}
+    isVibrateOnScan={true}
+    style={{background:"#FF0000"}}
+  />
+
 ```
 
 ## Contributing
