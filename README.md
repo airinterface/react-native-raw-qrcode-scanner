@@ -1,6 +1,7 @@
 # react-native-raw-qrcode-scanner
 
-Simple QRCode Reader that decodes to raw foramt
+Simple QRCode Reader that decodes to raw format. 
+No processing. Just using own platform's best library or native capability for QR Code. 
 
 ## Installation
 
