@@ -25,6 +25,15 @@ class ScannerController : UIViewController {
     var torchMode: AVCaptureDevice.TorchMode = AVCaptureDevice.TorchMode.on
     var cameraFacing: AVCaptureDevice.Position = AVCaptureDevice.Position.back
     var videoInput: AVCaptureInput?;
+    var processTimer: Timer? = nil;
+    var timerProcessing: Bool = false
+    @objc public static let frameProcessorQueue = DispatchQueue(
+        label: "airinterface/RawQRCodeScanner",
+        qos: .userInteractive,
+        attributes: [],
+        autoreleaseFrequency: .inherit,
+        target: nil)
+
     // if this view controller is loaded from a storyboard, imageURL will be nil
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
