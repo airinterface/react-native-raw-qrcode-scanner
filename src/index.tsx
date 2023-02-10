@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   requireNativeComponent,
   View,
@@ -8,7 +8,6 @@ import {
   NativeModules,
   Vibration,
 } from 'react-native';
-
 
 export type BarcodeItemType = {
   text: string | null;
@@ -31,6 +30,7 @@ type QrcodeScannerProps = {
 };
 
 var readCount = 0;
+
 const QRCodeScanner = (props: QrcodeScannerProps) => {
   const {
     cameraType,
@@ -43,6 +43,7 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
   let tmpScanEnabled = true;
   let vibrateTimer: any = null;
   let isVibrate = false;
+  const subscription = useRef(null);
   if (typeof isVibrateOnScan === 'boolean') {
     isVibrate = isVibrateOnScan;
   }
@@ -72,16 +73,29 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
       results: event.results || [],
     });
   };
-
-  if( Platform.OS === 'ios' ) {
-    const eventEmitter = new NativeEventEmitter(
-      NativeModules.RNRawQrCodeScannerEventEmitter
-    );
-    eventEmitter.addListener('onScanned', onChange);
-
-  } else if ( Platform.OS === 'android' ) {
-    DeviceEventEmitter.addListener('onScanned', onChange);
-  } 
+  /* eslint react-hooks/exhaustive-deps: off */
+  useEffect(() => {
+    if (subscription.current) {
+      subscription.current.remove();
+      subscription.current = null;
+    }
+    if (Platform.OS === 'ios') {
+      const eventEmitter = new NativeEventEmitter(
+        NativeModules.RNRawQrCodeScannerEventEmitter
+      );
+      subscription.current = eventEmitter.addListener('onScanned', onChange);
+    } else if (Platform.OS === 'android') {
+      subscription.current = DeviceEventEmitter.addListener(
+        'onScanned',
+        onChange
+      );
+    }
+    return () => {
+      if (subscription.current) {
+        subscription.current.remove();
+      }
+    };
+  }, []);
 
   const defaultStyle = {
     positon: 'absolute',
@@ -107,14 +121,14 @@ type RawQrcodeScannerProps = {
   flashEnabled?: boolean;
   scanEnabled?: boolean;
   cameraType?: string;
-  onScanned: (event:any)=>void;
+  onScanned: (event: any) => void;
   style: any;
 };
 
 const ComponentName = 'RNRawQrcodeScanner';
 
-
-const RNRawQrcodeScanner = requireNativeComponent<RawQrcodeScannerProps>(ComponentName)
+const RNRawQrcodeScanner =
+  requireNativeComponent<RawQrcodeScannerProps>(ComponentName);
 
 export type QRCodeScannerProps = RawQrcodeScannerProps;
 export default QRCodeScanner;
