@@ -17,7 +17,9 @@ open class RNRawQrCodeScannerEventEmitter: RCTEventEmitter {
     }
 
     static func dispatch(name: String, body: NSDictionary) {
-        eventEmitter.sendEvent(withName: name, body: body)
+        DispatchQueue.main.async {
+            eventEmitter.sendEvent(withName: name, body: body)
+        }
     }
     
     /// Base overide for RCTEventEmitter.
@@ -26,4 +28,7 @@ open class RNRawQrCodeScannerEventEmitter: RCTEventEmitter {
         return ["onScanned"]
     }
 
+    @objc open override class func requiresMainQueueSetup() -> Bool {
+         return false
+    }
 }

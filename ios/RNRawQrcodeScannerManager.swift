@@ -7,10 +7,6 @@ class RNRawQrcodeScannerManager : RCTViewManager {
       return scannerViewHelper.scannerView;
   }
 
-  @objc override static func requiresMainQueueSetup() -> Bool {
-    return false
-  }
-
 }
 
 

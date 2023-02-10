@@ -28,6 +28,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
+Podfile.lock
 
 # Android/IJ
 #
@@ -40,6 +41,9 @@ project.xcworkspace
 local.properties
 android.iml
 
+# NPM 
+package-lock.json
+yarn.lock
 # Cocoapods
 #
 example/ios/Pods
