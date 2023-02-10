@@ -1,9 +1,7 @@
-import React, { PropTypes } from 'react';
-
+import React from 'react';
 import {
   requireNativeComponent,
   View,
-  UIManager,
   Platform,
   NativeEventEmitter,
   DeviceEventEmitter,
@@ -11,11 +9,6 @@ import {
   Vibration,
 } from 'react-native';
 
-const LINKING_ERROR =
-  `The package 'react-native-raw-qrcode-scanner' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
 
 export type BarcodeItemType = {
   text: string | null;
@@ -33,7 +26,7 @@ type QrcodeScannerProps = {
   scanEnabled?: boolean;
   cameraType?: string;
   onScanned?: (barcodes: OnScannedEvent) => void;
-  style?: PropTypes.any;
+  style?: any;
   isVibrateOnScan?: boolean;
 };
 
@@ -79,12 +72,16 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
       results: event.results || [],
     });
   };
-  const eventEmitter = new NativeEventEmitter(
-    NativeModules.RNRawQrCodeScannerEventEmitter
-  );
-  eventEmitter.addListener('onScanned', onChange);
+  if( Platform.OS === 'ios' ) {
+    const eventEmitter = new NativeEventEmitter(
+      NativeModules.RNRawQrCodeScannerEventEmitter
+    );
+    eventEmitter.addListener('onScanned', onChange);
 
-  DeviceEventEmitter.addListener('onScanned', onChange);
+  } else if ( Platform.OS === 'android' ) {
+    DeviceEventEmitter.addListener('onScanned', onChange);
+  } 
+
   const defaultStyle = {
     positon: 'absolute',
     top: 0,
@@ -109,17 +106,13 @@ type RawQrcodeScannerProps = {
   flashEnabled?: boolean;
   scanEnabled?: boolean;
   cameraType?: string;
-  onScanned: PropTypes.func;
+  onScanned: (event:any)=>void;
+  style: any;
 };
 
 const ComponentName = 'RNRawQrcodeScanner';
 
-const RNRawQrcodeScanner =
-  UIManager.getViewManagerConfig(ComponentName) != null
-    ? requireNativeComponent<RawQrcodeScannerProps>(ComponentName)
-    : () => {
-        console.log(LINKING_ERROR);
-      };
+const RNRawQrcodeScanner = requireNativeComponent<RawQrcodeScannerProps>(ComponentName)
 
 export type QRCodeScannerProps = RawQrcodeScannerProps;
 export default QRCodeScanner;
