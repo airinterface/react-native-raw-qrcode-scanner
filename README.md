@@ -6,7 +6,7 @@ No processing. Just using own platform's best library or native capability for Q
 ## Installation
 
 ```sh
-npm install react-native-raw-qrcode-scanner
+npm install github:airinterface/react-native-raw-qrcode-scanner#v0.0.1
 ```
 ## PERMISSIONS Requirement
 
