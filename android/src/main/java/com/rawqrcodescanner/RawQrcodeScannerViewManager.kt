@@ -4,16 +4,11 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
-import com.facebook.react.bridge.Promise
-import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.modules.core.PermissionAwareActivity
-import com.facebook.react.modules.core.PermissionListener
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
@@ -121,6 +116,14 @@ class RawQrcodeScannerViewManager : ViewGroupManager<LinearLayout>()  {
         updateScannerProps(scannerView, "scanEnabled");
     }
     scannerView.scanEnabled = scanEnabled
+  }
+
+  @ReactProp(name="samplingRateMS")
+  fun setSamplingRateInMs(view: View, samplingRateInMS: Int) {
+    if (scannerView.samplingRateInMS != samplingRateInMS.toLong() ) {
+      updateScannerProps(scannerView, "samplingRateInMS");
+    }
+    scannerView.samplingRateInMS = samplingRateInMS.toLong()
   }
 
   override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> {

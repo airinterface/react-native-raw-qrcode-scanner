@@ -1,13 +1,13 @@
 package com.rawqrcodescanner.camera
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import kotlin.collections.ArrayList
 
 typealias QRCodeListener = (barcodes: List<Barcode>) -> Unit
 
@@ -25,9 +25,10 @@ class QRCodeAnalyzer (listener: QRCodeListener? = null) : ImageAnalysis.Analyzer
   companion object  {
     const val TAG = "QRCodeAnalyzer"
     const val UnknownEncodingMessage = "Unknown encoding"
+    const val DefaultSamplingRateInMS = 300L;
   }
   private var lastFrameProcessorCall = System.currentTimeMillis()
-  private val frameProcessorFps = 30;
+
   private val scanner = run {
       val options = BarcodeScannerOptions.Builder()
         .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
@@ -35,18 +36,18 @@ class QRCodeAnalyzer (listener: QRCodeListener? = null) : ImageAnalysis.Analyzer
       BarcodeScanning.getClient(options)
     }
   var enabled:Boolean = true;
+  var samplingRateInMS: Long = DefaultSamplingRateInMS;
   private val listeners = ArrayList<QRCodeListener>().apply { listener?.let { add(it) } }
 
     @SuppressLint("UnsafeExperimentalUsageError", "UnsafeOptInUsageError")
     override fun analyze(imageProxy: ImageProxy) {
 
       val now = System.currentTimeMillis()
-      val intervalMs = (1.0 / frameProcessorFps) * 1000.0
-      Log.d(TAG, ".")
       if ( !enabled ) {
         return
       }
-      if (now - lastFrameProcessorCall < intervalMs) {
+      val passedTime = now - lastFrameProcessorCall
+      if (passedTime  < samplingRateInMS ) {
         imageProxy.close()
         return
       }
@@ -56,9 +57,8 @@ class QRCodeAnalyzer (listener: QRCodeListener? = null) : ImageAnalysis.Analyzer
         return
       }
 
-      Log.d(TAG, "..Processing")
       val mediaImage = imageProxy.image
-      if (mediaImage != null) {
+      if (mediaImage != null && mediaImage.height > 0 && mediaImage.width > 0 ) {
         val image =
           InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
         // Pass image to an ML Kit Vision API
@@ -76,10 +76,10 @@ class QRCodeAnalyzer (listener: QRCodeListener? = null) : ImageAnalysis.Analyzer
             listeners.forEach { it(emptyList()) }
             imageProxy.close()
           }
+          lastFrameProcessorCall = now
       } else {
         imageProxy.close()
       }
-      lastFrameProcessorCall = now
     }
 }
 

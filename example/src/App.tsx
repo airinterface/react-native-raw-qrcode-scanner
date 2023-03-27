@@ -48,6 +48,7 @@ export default function App() {
         scanEnabled={enableScan}
         onScanned={onScanned}
         isVibrateOnScan={true}
+        samplingRateInMS={350}
         style={styles.cameraContainer}
       />
       <View style={styles.bottomContainer}>
