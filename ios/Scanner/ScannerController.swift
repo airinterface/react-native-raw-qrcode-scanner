@@ -17,10 +17,11 @@ struct ScannerParams {
 
 
 class ScannerController : UIViewController {
-
+    static var startTimer: Int64 = 0
     var previewView: ScannerView!
     var reconfigureNeeded: Bool = true
     var scanEnabled: Bool = true
+    var samplingRateInMS: NSNumber = ScannerView.defaultSamplingRateInMS
     var currentDevice: AVCaptureDevice? = nil
     var torchMode: AVCaptureDevice.TorchMode = AVCaptureDevice.TorchMode.on
     var cameraFacing: AVCaptureDevice.Position = AVCaptureDevice.Position.back
@@ -128,7 +129,6 @@ class ScannerController : UIViewController {
         if( _flashMode != self.torchMode ) {
             self.torchMode = _flashMode
             self.updateFlashMode();
-//            self.reconfigureNeeded = true;
         }
     }
     
@@ -163,7 +163,14 @@ class ScannerController : UIViewController {
             self.scanEnabled = enable
         }
     }
+
     
+    private func updateSamplingRateMS( _ samplingRateInMS: NSNumber ) {
+        if( samplingRateInMS != self.samplingRateInMS ) {
+            self.samplingRateInMS = samplingRateInMS
+        }
+    }
+
 
     
     private func updateCameraType(_ cameraType: String ){
@@ -175,14 +182,22 @@ class ScannerController : UIViewController {
     }
     
     
-    internal func setProp( propName: String, propValue: String, propBoolean: Bool = false ) {
+    internal func setProp(
+        propName: String, propNumber: NSNumber = 0,
+        propValue: String, propBoolean: Bool = false ) {
         switch( propName ){
         case "cameraType":
             self.updateCameraType( propValue );
+            break;
         case "flashEnabled":
             self.updateFlash( propBoolean );
+            break;
         case "scanEnabled":
             self.updateScanEnabled( propBoolean );
+            break;
+        case "samplingRateInMS":
+            self.updateSamplingRateMS( propNumber );
+            break;
         default: break
         }
     }

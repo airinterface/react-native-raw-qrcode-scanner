@@ -25,12 +25,13 @@ type QrcodeScannerProps = {
   scanEnabled?: boolean;
   cameraType?: string;
   onScanned?: (barcodes: OnScannedEvent) => void;
+  samplingRateMS?:number
   style?: any;
   isVibrateOnScan?: boolean;
 };
 
 var readCount = 0;
-
+let defaultSampleRateMS = 300;
 const QRCodeScanner = (props: QrcodeScannerProps) => {
   const {
     cameraType,
@@ -39,7 +40,9 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
     onScanned,
     style,
     isVibrateOnScan,
+    samplingRateInMS,
   } = props;
+  let samplingRateMillSec = samplingRateInMS || defaultSampleRateMS;
   let tmpScanEnabled = true;
   let vibrateTimer: any = null;
   let isVibrate = false;
@@ -56,22 +59,25 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
     tmpScanEnabled = scanEnabled;
   }
   const onChange = (event: any) => {
+    'worklet'
     if (!onScanned) {
       return;
     }
     readCount++;
-    if (!vibrateTimer && isVibrate && readCount === 1) {
+    if( readCount === 1 ) {
+      if (!vibrateTimer && isVibrate ) {
+        Vibration.vibrate();
+      }
       vibrateTimer = true;
-      Vibration.vibrate();
       vibrateTimer = setTimeout(() => {
         clearTimeout(vibrateTimer);
         readCount = 0;
         vibrateTimer = null;
-      }, 1000);
+      }, samplingRateMillSec);
+      onScanned({
+        results: event.results || [],
+      });
     }
-    onScanned({
-      results: event.results || [],
-    });
   };
   /* eslint react-hooks/exhaustive-deps: off */
   useEffect(() => {
@@ -112,6 +118,7 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
         onScanned={onChange}
         flashEnabled={flashEnabled || false}
         scanEnabled={tmpScanEnabled}
+        samplingRateInMS={samplingRateMillSec}
       />
     </View>
   );

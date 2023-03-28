@@ -17,8 +17,6 @@ import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
-import com.facebook.react.uimanager.UIManagerModule
-import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.google.android.gms.tasks.TaskExecutors
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.rawqrcodescanner.R
@@ -54,6 +52,10 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
     set( value ) {
       analyzer?.enabled = value
     }
+  var samplingRateInMS: Long = QRCodeAnalyzer.DefaultSamplingRateInMS
+    set( value ) {
+      analyzer?.samplingRateInMS = value
+    }
 
   private var camera: Camera? = null
   private var preview: Preview? = null
@@ -68,6 +70,7 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
 
   private val stateMutex = Mutex();
   private val cameraProviderMutex = Mutex();
+  private lateinit var cameraProvider: ProcessCameraProvider;
   private var processQRCode: Boolean = true;
   private var isMounted = false;
   private val inputRotation: Int
@@ -181,6 +184,8 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
   override fun onDetachedFromWindow() {
     super.onDetachedFromWindow()
     updateLifecycleState()
+    cameraProvider?.let { it.unbindAll() }
+
   }
 
 
@@ -254,7 +259,7 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
   }
 
   private suspend fun configureCameraSession(){
-    val cameraProvider = ProcessCameraProvider.getInstance(reactContext).await()
+    cameraProvider = ProcessCameraProvider.getInstance(reactContext).await()
     // Set up preview stream
     val aspectRatio = aspectRatio(
       viewFinder.height,

@@ -13,6 +13,7 @@ import UIKit
 
 @objc(ScannerView)
 class ScannerView : UIView {
+    public static let defaultSamplingRateInMS: NSNumber = 300;
     private var controller: ScannerController!
     
     @objc var cameraType: String = "" {
@@ -31,6 +32,13 @@ class ScannerView : UIView {
             self.controller?.setProp( propName: "flashEnabled", propValue: "", propBoolean: flashEnabled )
         }
     }
+    
+    @objc var samplingRateInMS:NSNumber = defaultSamplingRateInMS {
+        didSet {
+            self.controller?.setProp( propName: "samplingRateInMS", propNumber: samplingRateInMS, propValue: "", propBoolean: false )
+        }
+    }
+
     @objc var onScanned:RCTDirectEventBlock?;
 
     override public final func didSetProps(_ changedProps: [String]!) {
