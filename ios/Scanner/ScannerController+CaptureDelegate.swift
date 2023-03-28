@@ -10,11 +10,9 @@ import AVKit
 
 extension ScannerController : AVCaptureMetadataOutputObjectsDelegate {
 
-    
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         ScannerController.frameProcessorQueue.async {
             if ( self.canProcess() ){
-                self.startTimer();
                 guard !metadataObjects.isEmpty else {
                     return;
                 }
@@ -44,32 +42,35 @@ extension ScannerController : AVCaptureMetadataOutputObjectsDelegate {
         
     }
     
-    @objc private func clearTimer() {
-        ScannerController.frameProcessorQueue.async {
-            self.processTimer?.invalidate();
-            self.processTimer = nil
-        }
-    }
+//    @objc private func clearTimer() {
+//        ScannerController.frameProcessorQueue.async {
+//            self.processTimer?.invalidate();
+//            self.processTimer = nil
+//        }
+//    }
     
-    private func startTimer(){
-        self.timerProcessing = true;
-        if( self.processTimer == nil  || !self.processTimer!.isValid ) {
-            DispatchQueue.main.async {
-                self.processTimer = Timer.scheduledTimer(
-                    withTimeInterval: 1.0,
-                    repeats: false) { timer in
-                        self.clearTimer()
-                    }
-                self.timerProcessing = false
-            }
-        } else {
-            self.timerProcessing = false
-        }
-    }
+//    private func startTimer(){
+//        self.timerProcessing = true;
+//        if( self.processTimer == nil  || !self.processTimer!.isValid ) {
+//            DispatchQueue.main.async {
+//                self.processTimer = Timer.scheduledTimer(
+//                    withTimeInterval: 1.0,
+//                    repeats: false) { timer in
+//                        self.clearTimer()
+//                    }
+//                self.timerProcessing = false
+//            }
+//        } else {
+//            self.timerProcessing = false
+//        }
+//    }
     
     private func canProcess() -> Bool{
-        var res = false;
-        res = ( self.scanEnabled && ( self.processTimer == nil || !self.processTimer!.isValid ) )
+        var now = Date().nowInMillSec;
+        let res = ( now -  ScannerController.startTimer  ) > Int64(truncating: self.samplingRateInMS);
+        if( res == true ){
+            ScannerController.startTimer = Int64( Date().nowInMillSec )
+        }
         return res;
     }
 

@@ -118,7 +118,7 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
         onScanned={onChange}
         flashEnabled={flashEnabled || false}
         scanEnabled={tmpScanEnabled}
-        samplingRateMS={samplingRateMillSec}
+        samplingRateInMS={samplingRateMillSec}
       />
     </View>
   );

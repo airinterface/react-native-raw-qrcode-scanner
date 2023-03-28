@@ -58,6 +58,7 @@ import QRCodeScanner, { OnScannedEvent } from 'react-native-raw-qrcode-scanner';
     onScanned={onScanned}
     isVibrateOnScan={true}
     style={{background:"#FF0000"}}
+    samplingRateInMS={300}
   />
 
 ```

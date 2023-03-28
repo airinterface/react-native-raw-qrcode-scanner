@@ -10,6 +10,7 @@ RCT_EXTERN_METHOD(supportedEvents)
 RCT_EXPORT_VIEW_PROPERTY(cameraType, NSString)
 RCT_EXPORT_VIEW_PROPERTY(scanEnabled, BOOL )
 RCT_EXPORT_VIEW_PROPERTY(flashEnabled, BOOL )
+RCT_EXPORT_VIEW_PROPERTY(samplingRateInMS, NSNumber )
 //RCT_EXPORT_VIEW_PROPERTY(onScanned, RCTDirectEventBlock);
 @end
 
