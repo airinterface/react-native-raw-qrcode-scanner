@@ -64,12 +64,11 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
   private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
   private val callBackExecutor:ScopedExecutor = ScopedExecutor(TaskExecutors.MAIN_THREAD)
   private val lifecycleRegistry: LifecycleRegistry
-  private lateinit var hostLifecycleState: Lifecycle.State
+  private var hostLifecycleState: Lifecycle.State
   private lateinit var analyzer: QRCodeAnalyzer
   private lateinit var viewFinder: PreviewView
 
   private val stateMutex = Mutex();
-  private val cameraProviderMutex = Mutex();
   private lateinit var cameraProvider: ProcessCameraProvider;
   private var processQRCode: Boolean = true;
   private var isMounted = false;
@@ -77,19 +76,21 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
     get() {
       return reactContext.displayRotation
     }
-  private val outputRotation: Int
-    get() {
-        return inputRotation
-      }
 
   init {
     hostLifecycleState = Lifecycle.State.INITIALIZED
     lifecycleRegistry = LifecycleRegistry(this)
     reactContext.addLifecycleEventListener(object : LifecycleEventListener {
       override fun onHostResume() {
-        hostLifecycleState = Lifecycle.State.RESUMED
-        updateLifecycleState()
-        update( propsThatRequireSessionReconfiguration )
+        try {
+          Log.i(TAG, "#YF ---------------onHostResume 1")
+          hostLifecycleState = Lifecycle.State.RESUMED
+          Log.i(TAG, "#YF ---------------onHostResume 2")
+          updateLifecycleState()
+          Log.i(TAG, "#YF ---------------onHostResume 3")
+        } catch( e: Exception ) {
+          Log.i(TAG, "#YF ---------------onHostResume error " + e )
+        }
       }
       override fun onHostPause() {
         hostLifecycleState = Lifecycle.State.CREATED
@@ -103,6 +104,7 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
         reactContext.removeLifecycleEventListener(this)
       }
     })
+    Log.i(TAG,"#YF ---------------Initializing PreviewView")
     initializeAnalyzer()
     initView();
 
@@ -209,7 +211,6 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
     val view =  inflate(context.applicationContext, R.layout.preview_layout, this) as ScannerView;
     viewFinder = view.findViewById(R.id.view_finder);
     viewFinder.installHierarchyFitter() // If this is not called correctly, view finder will be black/blank
-
     return view;
   }
 
