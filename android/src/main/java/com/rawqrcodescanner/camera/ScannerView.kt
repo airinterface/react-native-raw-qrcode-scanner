@@ -284,6 +284,7 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
       camera = cameraProvider.bindToLifecycle(
         this, cameraSelector, preview, imageAnalyzer
       )
+
       if( camera?.cameraInfo?.hasFlashUnit() == true ) {
         camera?.cameraControl?.enableTorch(flashEnabled)
       }
@@ -298,6 +299,11 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
       Log.e(
         TAG,
         "Camera selector is unable to resolve a camera to be used for the given use cases."
+      )
+    } catch ( arg: Exception ) {
+      Log.e(
+        TAG,
+        arg.toString()
       )
     }
   }

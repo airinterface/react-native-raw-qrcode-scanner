@@ -57,6 +57,11 @@ class QRCodeAnalyzer (listener: QRCodeListener? = null) : ImageAnalysis.Analyzer
         return
       }
 
+      if( true ) {
+        imageProxy.close()
+        return
+      }
+
       val mediaImage = imageProxy.image
       if (mediaImage != null && mediaImage.height > 0 && mediaImage.width > 0 ) {
         val image =
