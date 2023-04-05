@@ -34,7 +34,7 @@ val Context.displayRotation: Int
         }
       }
     } catch ( e: Exception ) {
-      Log.i(ScannerView.TAG,"#YF ---------------Rotation error " + e )
+      Log.e(ScannerView.TAG, e.toString() )
     }
 
     // 0

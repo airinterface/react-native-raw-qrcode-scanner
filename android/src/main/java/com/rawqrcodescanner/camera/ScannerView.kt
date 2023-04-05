@@ -83,11 +83,8 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
     reactContext.addLifecycleEventListener(object : LifecycleEventListener {
       override fun onHostResume() {
         try {
-          Log.i(TAG, "#YF ---------------onHostResume 1")
           hostLifecycleState = Lifecycle.State.RESUMED
-          Log.i(TAG, "#YF ---------------onHostResume 2")
           updateLifecycleState()
-          Log.i(TAG, "#YF ---------------onHostResume 3")
         } catch( e: Exception ) {
           Log.i(TAG, "#YF ---------------onHostResume error " + e )
         }
@@ -210,7 +207,8 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
   private fun initView(): ScannerView{
     val view =  inflate(context.applicationContext, R.layout.preview_layout, this) as ScannerView;
     viewFinder = view.findViewById(R.id.view_finder);
-    viewFinder.installHierarchyFitter() // If this is not called correctly, view finder will be black/blank
+    viewFinder.installHierarchyFitter(); // If this is not called correctly, view finder will be black/blank
+    view.installHierarchyFitter();
     return view;
   }
 
@@ -256,7 +254,7 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
   }
 
   private fun getFacing( cameraFacing: String ):Int {
-    return (cameraTypes.get(cameraFacing)?: cameraTypes.get("back")) as Int;
+    return (cameraTypes[cameraFacing] ?: cameraTypes["back"]) as Int;
   }
 
   private suspend fun configureCameraSession(){
@@ -277,12 +275,14 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
     // CameraSelector
     val cameraSelector =
       CameraSelector.Builder().requireLensFacing(getFacing( cameraType )).build()
+    // I Don't know why we need this
+    val imageCapture = ImageCapture.Builder().build()
 
     try {
       // A variable number of use-cases can be passed here -
       // camera provides access to CameraControl & CameraInfo
       camera = cameraProvider.bindToLifecycle(
-        this, cameraSelector, preview, imageAnalyzer
+        this, cameraSelector, preview, imageCapture, imageAnalyzer
       )
 
       if( camera?.cameraInfo?.hasFlashUnit() == true ) {

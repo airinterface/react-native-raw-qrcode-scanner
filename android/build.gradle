@@ -84,7 +84,7 @@ dependencies {
   implementation "androidx.camera:camera-camera2:$cameraxVersion"
   implementation "androidx.camera:camera-lifecycle:$cameraxVersion"
   implementation "androidx.camera:camera-view:$cameraxVersion"
-  implementation "androidx.camera:camera-view:$cameraxVersion"
+//  implementation "androidx.camera:camera-view:1.0.0-alpha30"
 
 
   if (isNewArchitectureEnabled()) {
