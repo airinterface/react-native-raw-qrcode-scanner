@@ -86,7 +86,7 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
           hostLifecycleState = Lifecycle.State.RESUMED
           updateLifecycleState()
         } catch( e: Exception ) {
-          Log.i(TAG, "#YF ---------------onHostResume error " + e )
+          Log.i(TAG, "onHostResume error $e" )
         }
       }
       override fun onHostPause() {
@@ -101,7 +101,6 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
         reactContext.removeLifecycleEventListener(this)
       }
     })
-    Log.i(TAG,"#YF ---------------Initializing PreviewView")
     initializeAnalyzer()
     initView();
 
@@ -153,7 +152,6 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
   fun update(changedProps: ArrayList<String>) = viewFinder.post {
     mainCoroutineScope.launch {
       val shouldReconfigureSession = changedProps.containsAnyProp(propsThatRequireSessionReconfiguration)
-      val shouldReconfigureFlash = shouldReconfigureSession || changedProps.contains("flashEnabled")
       if (changedProps.contains("scanEnabled")) {
         updateLifecycleState()
       }
@@ -276,13 +274,13 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
     val cameraSelector =
       CameraSelector.Builder().requireLensFacing(getFacing( cameraType )).build()
     // I Don't know why we need this
-    val imageCapture = ImageCapture.Builder().build()
+    //val imageCapture = ImageCapture.Builder().build()
 
     try {
       // A variable number of use-cases can be passed here -
       // camera provides access to CameraControl & CameraInfo
       camera = cameraProvider.bindToLifecycle(
-        this, cameraSelector, preview, imageCapture, imageAnalyzer
+        this, cameraSelector, preview, /* imageCapture, */ imageAnalyzer
       )
 
       if( camera?.cameraInfo?.hasFlashUnit() == true ) {
