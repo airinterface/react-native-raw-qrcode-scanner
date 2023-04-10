@@ -1,6 +1,7 @@
 package com.rawqrcodescanner.camera
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
@@ -44,6 +45,7 @@ class QRCodeAnalyzer (listener: QRCodeListener? = null) : ImageAnalysis.Analyzer
 
       val now = System.currentTimeMillis()
       if ( !enabled ) {
+        imageProxy.close()
         return
       }
       val passedTime = now - lastFrameProcessorCall
@@ -56,29 +58,32 @@ class QRCodeAnalyzer (listener: QRCodeListener? = null) : ImageAnalysis.Analyzer
         imageProxy.close()
         return
       }
-
-      val mediaImage = imageProxy.image
-      if (mediaImage != null && mediaImage.height > 0 && mediaImage.width > 0 ) {
-        val image =
-          InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-        // Pass image to an ML Kit Vision API
-        // ...
-        scanner.process(image)
-          .addOnSuccessListener { barcodes ->
-            // Task completed successfully
-            // ...
-            listeners.forEach { it(barcodes) }
-            imageProxy.close()
-          }
-          .addOnFailureListener {
-            // Task failed with an exception
-            // ...
-            listeners.forEach { it(emptyList()) }
-            imageProxy.close()
-          }
-          lastFrameProcessorCall = now
-      } else {
-        imageProxy.close()
+      try{
+        val mediaImage = imageProxy.image
+        if (mediaImage != null && mediaImage.height > 0 && mediaImage.width > 0 ) {
+          val image =
+            InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+          // Pass image to an ML Kit Vision API
+          // ...
+          scanner.process(image)
+            .addOnSuccessListener { barcodes ->
+              // Task completed successfully
+              // ...
+              listeners.forEach { it(barcodes) }
+              imageProxy.close()
+            }
+            .addOnFailureListener {
+              // Task failed with an exception
+              // ...
+              listeners.forEach { it(emptyList()) }
+              imageProxy.close()
+            }
+            lastFrameProcessorCall = now
+        } else {
+          imageProxy.close()
+        }
+      } catch ( e: Exception ) {
+        Log.i(ScannerView.TAG, "#YF ---------------" + e.toString() )
       }
     }
 }

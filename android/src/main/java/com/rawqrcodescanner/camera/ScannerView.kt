@@ -64,12 +64,11 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
   private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
   private val callBackExecutor:ScopedExecutor = ScopedExecutor(TaskExecutors.MAIN_THREAD)
   private val lifecycleRegistry: LifecycleRegistry
-  private lateinit var hostLifecycleState: Lifecycle.State
+  private var hostLifecycleState: Lifecycle.State
   private lateinit var analyzer: QRCodeAnalyzer
   private lateinit var viewFinder: PreviewView
 
   private val stateMutex = Mutex();
-  private val cameraProviderMutex = Mutex();
   private lateinit var cameraProvider: ProcessCameraProvider;
   private var processQRCode: Boolean = true;
   private var isMounted = false;
@@ -77,19 +76,18 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
     get() {
       return reactContext.displayRotation
     }
-  private val outputRotation: Int
-    get() {
-        return inputRotation
-      }
 
   init {
     hostLifecycleState = Lifecycle.State.INITIALIZED
     lifecycleRegistry = LifecycleRegistry(this)
     reactContext.addLifecycleEventListener(object : LifecycleEventListener {
       override fun onHostResume() {
-        hostLifecycleState = Lifecycle.State.RESUMED
-        updateLifecycleState()
-        update( propsThatRequireSessionReconfiguration )
+        try {
+          hostLifecycleState = Lifecycle.State.RESUMED
+          updateLifecycleState()
+        } catch( e: Exception ) {
+          Log.i(TAG, "onHostResume error $e" )
+        }
       }
       override fun onHostPause() {
         hostLifecycleState = Lifecycle.State.CREATED
@@ -154,7 +152,6 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
   fun update(changedProps: ArrayList<String>) = viewFinder.post {
     mainCoroutineScope.launch {
       val shouldReconfigureSession = changedProps.containsAnyProp(propsThatRequireSessionReconfiguration)
-      val shouldReconfigureFlash = shouldReconfigureSession || changedProps.contains("flashEnabled")
       if (changedProps.contains("scanEnabled")) {
         updateLifecycleState()
       }
@@ -208,8 +205,8 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
   private fun initView(): ScannerView{
     val view =  inflate(context.applicationContext, R.layout.preview_layout, this) as ScannerView;
     viewFinder = view.findViewById(R.id.view_finder);
-    viewFinder.installHierarchyFitter() // If this is not called correctly, view finder will be black/blank
-
+    viewFinder.installHierarchyFitter(); // If this is not called correctly, view finder will be black/blank
+    view.installHierarchyFitter();
     return view;
   }
 
@@ -255,7 +252,7 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
   }
 
   private fun getFacing( cameraFacing: String ):Int {
-    return (cameraTypes.get(cameraFacing)?: cameraTypes.get("back")) as Int;
+    return (cameraTypes[cameraFacing] ?: cameraTypes["back"]) as Int;
   }
 
   private suspend fun configureCameraSession(){
@@ -273,7 +270,7 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
 
     val imageAnalyzer = buildImageAnalyzer(aspectRatio, rotation)
     cameraProvider.unbindAll()
-    // CameraSelector
+
     val cameraSelector =
       CameraSelector.Builder().requireLensFacing(getFacing( cameraType )).build()
 
@@ -283,6 +280,7 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
       camera = cameraProvider.bindToLifecycle(
         this, cameraSelector, preview, imageAnalyzer
       )
+
       if( camera?.cameraInfo?.hasFlashUnit() == true ) {
         camera?.cameraControl?.enableTorch(flashEnabled)
       }
@@ -297,6 +295,11 @@ class ScannerView(private var reactContext: ReactContext, private var onScanned:
       Log.e(
         TAG,
         "Camera selector is unable to resolve a camera to be used for the given use cases."
+      )
+    } catch ( arg: Exception ) {
+      Log.e(
+        TAG,
+        arg.toString()
       )
     }
   }
