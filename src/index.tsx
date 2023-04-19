@@ -25,7 +25,7 @@ type QrcodeScannerProps = {
   scanEnabled?: boolean;
   cameraType?: string;
   onScanned?: (barcodes: OnScannedEvent) => void;
-  samplingRateMS?: number;
+  samplingRateInMS?: number;
   style?: any;
   isVibrateOnScan?: boolean;
 };
@@ -46,7 +46,7 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
   let tmpScanEnabled = true;
   let vibrateTimer: any = null;
   let isVibrate = false;
-  const subscription = useRef(null);
+  const subscription = useRef<any>(null);
   if (typeof isVibrateOnScan === 'boolean') {
     isVibrate = isVibrateOnScan;
   }
@@ -82,9 +82,12 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
   /* eslint react-hooks/exhaustive-deps: off */
   useEffect(() => {
     if (subscription.current) {
-      subscription.current.remove();
+      if ((subscription.current as any).remove) {
+        (subscription.current as any).remove();
+      }
       subscription.current = null;
     }
+
     if (Platform.OS === 'ios') {
       const eventEmitter = new NativeEventEmitter(
         NativeModules.RNRawQrCodeScannerEventEmitter
@@ -129,6 +132,7 @@ type RawQrcodeScannerProps = {
   scanEnabled?: boolean;
   cameraType?: string;
   onScanned: (event: any) => void;
+  samplingRateInMS?: number;
   style: any;
 };
 
