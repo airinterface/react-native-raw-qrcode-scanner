@@ -25,7 +25,7 @@ type QrcodeScannerProps = {
   scanEnabled?: boolean;
   cameraType?: string;
   onScanned?: (barcodes: OnScannedEvent) => void;
-  samplingRateMS?:number
+  samplingRateMS?: number;
   style?: any;
   isVibrateOnScan?: boolean;
 };
@@ -59,13 +59,13 @@ const QRCodeScanner = (props: QrcodeScannerProps) => {
     tmpScanEnabled = scanEnabled;
   }
   const onChange = (event: any) => {
-    'worklet'
+    'worklet';
     if (!onScanned) {
       return;
     }
     readCount++;
-    if( readCount === 1 ) {
-      if (!vibrateTimer && isVibrate ) {
+    if (readCount === 1) {
+      if (!vibrateTimer && isVibrate) {
         Vibration.vibrate();
       }
       vibrateTimer = true;
